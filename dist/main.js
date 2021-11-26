@@ -1,0 +1,1 @@
+(()=>{"use strict";document.body.append(function(){const t=document.createElement("div"),e=document.createElement("h2");e.textContent="TITLE";const n=document.createElement("h3");n.textContent="DUEDATE";const c=document.createElement("p");c.textContent="DESCRIPTION";const o=document.createElement("h3");return o.textContent="PRIORITY",t.append(e,n,c,o),t}())})();
