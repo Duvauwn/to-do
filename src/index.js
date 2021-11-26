@@ -1,3 +1,3 @@
-import newToDo from './newToDo.js';
+import { newToDo, newUser } from './dom.js';
 
-document.body.append(newToDo());
+document.body.append(newToDo(), newUser());
