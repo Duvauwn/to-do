@@ -1,0 +1,48 @@
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#forms-holder{
+    display:flex;
+    border:2px solid black;
+}
+#form-tab{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    gap:30px;
+    background-color: #ffcdfd;
+    height:100%;
+    width:100%;
+}
+.form-button{
+    border:none;
+    border-radius: 100%;
+    height:40px;
+    width:40px;
+    font-size: 35px;
+    background-color: #fc8df8;
+    color:#ffdcbe;
+}
+#hover {
+    background-color: #bd43b9;
+}
+.hidden {
+    display:none;
+}
+#myForm {
+    display:flex;
+    width:80vw;
+    height:200px;
+    justify-content: center;
+    align-items: center;
+    border-left: 2px solid black;
+    gap:10px;
+    background-color: #ffb7fd;
+}
+#todo-container{
+    border:2px solid black;
+    background-color: #ffb7fd;
+    color:#ffdcbe
+}
