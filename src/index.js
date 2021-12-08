@@ -4,128 +4,109 @@ import './style.css';
 
 const entries = [];
 
-const myForm = (() => {
-    'use strict';
-    const formsHolder = document.createElement('div');
-    formsHolder.id = 'forms-holder';
-    document.body.append(formsHolder);
+const bodyContainer = (() => {
+    const display = document.createElement('div');
+    display.id = 'display';
 
-    const newForm = document.createElement('button');
-    newForm.classList.add('form-button');
-    newForm.textContent = '+';
+    const headContainer = (() => {
 
-    const newFormStyle = (() => {
-        newForm.addEventListener('mouseover', function () {
-            newForm.id = 'hover'
-        });
+        const head = document.createElement('div');
+        head.id = 'head';
 
-        newForm.addEventListener('mouseout', function () {
-            newForm.id = '';
-        })
+        const header = document.createElement('h1');
+        header.textContent = 'To-Do';
+
+        head.appendChild(header);
+
+        return { head };
     })();
 
-    const switcher = (() => {
-        const formTabContainer = document.createElement('div');
-        formTabContainer.classList.add('hidden');
 
-        const formTab = document.createElement('div');
-        formTab.id = 'form-tab';
+    const mainContainer = (() => {
 
-        const todoTab = document.createElement('button');
-        todoTab.textContent = 'New To-Do';
+        const main = document.createElement('div');
+        main.id = 'main';
 
-        const projectTab = document.createElement('button');
-        projectTab.textContent = 'New Project';
+        const tabContainer = (() => {
 
-        formTab.append(todoTab, projectTab);
+            const tab = document.createElement('div');
+            tab.id = 'tab';
 
-        formTabContainer.appendChild(formTab);
+            const tabHead = document.createElement('h2');
+            tabHead.textContent = 'Projects';
 
-        newForm.addEventListener('click', function () {
-            formTabContainer.classList.remove('hidden');
-        })
+            const newProject = document.createElement('button');
+            newProject.textContent = '+ New Project';
+            newProject.id = 'newProject';
 
-        formsHolder.append(formTabContainer);
+            tab.append(tabHead, newProject);
+            main.appendChild(tab);
+        })();
 
-        return { formTab, formTabContainer, projectTab, todoTab };
+        const dynamicContainer = (() => {
+
+            const dynamic = document.createElement('div');
+            dynamic.id = 'dynamic';
+
+            const newTask = document.createElement('button');
+            newTask.textContent = 'Add a New Task';
+            newTask.id = 'newTodo';
+
+            const myForm = (() => {
+                const formContainer = document.createElement('div');
+                formContainer.classList.add('hidden');
+                formContainer.id = 'formContainer';
+
+                const form = document.createElement('form');
+                form.id = 'myForm';
+
+                const task = document.createElement('input');
+                task.type = 'text';
+
+                const dueDate = document.createElement('input');
+                dueDate.type = 'date';
+
+                const submit = document.createElement('button');
+                submit.type = 'button';
+                submit.textContent = 'Submit';
+
+                form.append(task, dueDate, submit);
+                formContainer.append(form);
+
+                submit.addEventListener('click', function () {
+                    formContainer.classList.add('hidden');
+                    const newTodo = todo(task.value, dueDate.value);
+                    newTodo.addToEntries();
+                    console.log(entries);
+                    const updaterContainer = document.createElement('div');
+                    updaterContainer.classList.add('todos');
+                    for (let prop in entries[entries.length - 1]) {
+                        const updater = document.createElement('h3');
+                        updater.textContent = entries[entries.length - 1][prop];
+                        updaterContainer.append(updater);
+                    }
+                    dynamic.append(updaterContainer);
+                })
+
+                return { formContainer };
+            })();
+
+            newTask.addEventListener('click', function () {
+                myForm.formContainer.classList.remove('hidden');
+            })
+
+            dynamic.append(newTask);
+            dynamic.append(myForm.formContainer)
+            main.appendChild(dynamic);
+        })();
+
+        return { main };
     })();
 
-    const projects = (() => {
-        const projectForm = document.createElement('form');
-        projectForm.id = 'myForm';
-
-        const project = document.createElement('input');
-        project.type = 'text';
-        project.placeholder = 'New Project';
-
-        const submit = document.createElement('button');
-        submit.type = 'button';
-        submit.textContent = 'Submit';
-
-        projectForm.append(project, submit);
-
-        switcher.projectTab.addEventListener('click', function () {
-            formToDo.formContainer.removeChild(formToDo.form);
-            formToDo.formContainer.appendChild(projectForm);
-        })
-
-        return { projectForm };
-
-    })();
-
-    const formToDo = (() => {
-
-        const formContainer = document.createElement('div');
-        formContainer.classList.add('hidden');
-
-        const form = document.createElement('form');
-        form.id = 'myForm';
-
-        const task = document.createElement('input');
-        task.type = 'text';
-        task.placeholder = 'Task';
-
-        const dueDate = document.createElement('input');
-        dueDate.type = 'date';
-
-        const submit = document.createElement('button');
-        submit.textContent = 'Submit';
-        submit.type = 'button';
-
-        newForm.addEventListener('click', function () {
-            formContainer.classList.remove('hidden');
-            newForm.classList.add('hidden');
-        })
-
-        submit.addEventListener('click', function () {
-            formContainer.classList.add('hidden');
-            myForm.switcher.formTabContainer.classList.add('hidden');
-            newForm.classList.remove('hidden');
-            const userData = todo(task.value, dueDate.value);
-            userData.addToEntries();
-            userData.updateDom();
-        })
-
-        document.body.appendChild(newForm);
-
-        form.append(task, dueDate, submit);
-
-        formContainer.appendChild(form);
-
-        formsHolder.appendChild(formContainer);
-
-        switcher.todoTab.addEventListener('click', function () {
-            formContainer.removeChild(projects.projectForm);
-            formContainer.appendChild(form);
-        })
-
-        return { formContainer, form };
-
-    })();
-    return { switcher };
+    display.append(headContainer.head, mainContainer.main);
+    document.body.appendChild(display);
 
 })();
-
 
 function todo(task, dueDate) {
     return {
@@ -134,21 +115,47 @@ function todo(task, dueDate) {
 
         addToEntries() {
             entries.push({ task, dueDate });
-        },
-        updateDom() {
-            const container = document.createElement('div');
-            container.id = 'todo-container';
-
-            for (let property in entries[entries.length - 1]) {
-                let content = document.createElement('h2');
-                content.textContent = entries[entries.length - 1][property];
-                container.appendChild(content);
-            }
-            document.body.appendChild(container);
         }
     };
 };
 
-const example = todo('Create a To-Do App', '04/12/21');
-example.addToEntries();
-example.updateDom();
+const projects = (() => {
+    const project = {};
+
+    const tab = document.querySelector('#tab');
+
+    const projectContainer = document.createElement('div');
+    projectContainer.classList.add('hidden');
+
+    const projectForm = document.createElement('form');
+    projectForm.id = 'projectForm';
+
+    const projectName = document.createElement('input');
+    projectName.type = 'text';
+
+    const submit = document.createElement('button');
+    submit.textContent = 'Submit';
+    submit.type = 'button';
+
+    projectForm.append(projectName, submit);
+    projectContainer.append(projectForm);
+    tab.append(projectContainer);
+
+    const newProject = document.querySelector('#newProject');
+
+    newProject.addEventListener('click', function () {
+        projectContainer.classList.remove('hidden');
+    })
+
+    submit.addEventListener('click', function () {
+        projectContainer.classList.add('hidden');
+    })
+
+    const addProject = (() => {
+        submit.addEventListener('click', function () {
+            project[projectName.value] = [];
+            console.log(Object.keys(project).length);
+            console.log(project);
+        })
+    })();
+})();

@@ -1,48 +1,53 @@
-body{
+#display{
+    font-family: monospace;
+}
+#head{
+    display:flex;
+    width:100%;
+    background-color: grey;
+    color:azure;
+}
+#main{
+    display: flex;
+    width:95.6vw;
+    height: 100vh;
+}
+#tab{
+    background-color: #ffd59f;
+    flex:0 1 auto;
+}
+#dynamic{
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-#forms-holder{
-    display:flex;
-    border:2px solid black;
-}
-#form-tab{
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    gap:30px;
-    background-color: #ffcdfd;
-    height:100%;
-    width:100%;
-}
-.form-button{
-    border:none;
-    border-radius: 100%;
-    height:40px;
-    width:40px;
-    font-size: 35px;
-    background-color: #fc8df8;
-    color:#ffdcbe;
-}
-#hover {
-    background-color: #bd43b9;
+    background-color: #413d35;
+    flex:1 1 auto;
 }
 .hidden {
     display:none;
 }
-#myForm {
-    display:flex;
-    width:80vw;
-    height:200px;
-    justify-content: center;
-    align-items: center;
-    border-left: 2px solid black;
-    gap:10px;
-    background-color: #ffb7fd;
+#formContainer{
+    width:90%;
+    height:50px;
 }
-#todo-container{
-    border:2px solid black;
-    background-color: #ffb7fd;
-    color:#ffdcbe
+#myForm{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:20px;
+    background-color: grey;
+    height:100%;
+    border-radius: 5px;
+}
+.todos{
+    display:flex;
+    justify-content: space-between;
+    width:80%;
+    border:2px solid #ffd59f;
+    border-radius: 5px;
+    color: #ffd59f;
+}
+#projectForm{
+    display:flex;
+    flex-direction: column;
 }
