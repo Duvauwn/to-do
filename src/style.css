@@ -13,6 +13,8 @@
     height: 100vh;
 }
 #tab{
+    display: flex;
+    flex-direction: column;
     background-color: #ffd59f;
     flex:0 1 auto;
 }
@@ -48,6 +50,10 @@
     color: #ffd59f;
 }
 #projectForm{
+    display:flex;
+    flex-direction: column;
+}
+#radioContainer{
     display:flex;
     flex-direction: column;
 }

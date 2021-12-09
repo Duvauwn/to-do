@@ -2,7 +2,15 @@ import { } from './dom.js';
 import { } from './logic.js';
 import './style.css';
 
-const entries = [];
+const project = {
+    default: [
+        { task: 'one', dueDate: 'today' },
+        { task: 'two', dueDate: 'now' },
+        { task: 'three', dueDate: 'in two minutes' },
+        { task: 'four', dueDate: 'right now' },
+    ],
+};
+
 
 const bodyContainer = (() => {
     const display = document.createElement('div');
@@ -44,16 +52,17 @@ const bodyContainer = (() => {
         })();
 
         const dynamicContainer = (() => {
-
             const dynamic = document.createElement('div');
             dynamic.id = 'dynamic';
 
             const newTask = document.createElement('button');
             newTask.textContent = 'Add a New Task';
+            newTask.classList.add('display');
             newTask.id = 'newTodo';
 
             const myForm = (() => {
                 const formContainer = document.createElement('div');
+                formContainer.classList.add('display');
                 formContainer.classList.add('hidden');
                 formContainer.id = 'formContainer';
 
@@ -73,59 +82,99 @@ const bodyContainer = (() => {
                 form.append(task, dueDate, submit);
                 formContainer.append(form);
 
+                function populateDisplay() {
+                    const dynamicAll = document.querySelectorAll('.display');
+
+                    const container = document.querySelectorAll('.projectRadio');
+
+                    let arr;
+
+
+                    for (let p = 0; p < container.length; p++) {
+                        if (container[p].checked == true) {
+                            arr = container[p].parentNode.textContent;
+                        }
+                    }
+
+                    for (let j = 0; j < dynamicAll.length; j++) {
+                        if (j > 1) {
+                            dynamicAll[j].remove();
+                        }
+                    }
+                    const newTodo = todo(task.value, dueDate.value, arr);
+                    if (task.value != '' && dueDate.value != '') {
+                        newTodo.addToEntries();
+                    }
+
+                    for (let i = 0; i < project[arr].length; i++) {
+                        const updateContainer = document.createElement('div');
+                        updateContainer.classList.add('todos');
+                        updateContainer.classList.add('display');
+
+                        for (let prop in project[arr][i]) {
+                            const updater = document.createElement('h3');
+                            updater.textContent = project[arr][i][prop];
+                            updateContainer.append(updater);
+                        }
+                        dynamic.append(updateContainer);
+                    }
+                }
+
+                dynamic.append(newTask);
+                dynamic.append(formContainer);
+
                 submit.addEventListener('click', function () {
                     formContainer.classList.add('hidden');
-                    const newTodo = todo(task.value, dueDate.value);
-                    newTodo.addToEntries();
-                    console.log(entries);
-                    const updaterContainer = document.createElement('div');
-                    updaterContainer.classList.add('todos');
-                    for (let prop in entries[entries.length - 1]) {
-                        const updater = document.createElement('h3');
-                        updater.textContent = entries[entries.length - 1][prop];
-                        updaterContainer.append(updater);
-                    }
-                    dynamic.append(updaterContainer);
+
+                    populateDisplay();
                 })
 
-                return { formContainer };
+                return { formContainer, populateDisplay };
             })();
 
             newTask.addEventListener('click', function () {
                 myForm.formContainer.classList.remove('hidden');
             })
 
-            dynamic.append(newTask);
-            dynamic.append(myForm.formContainer)
+
             main.appendChild(dynamic);
+
+            return { myForm };
         })();
 
-        return { main };
+
+
+        return { main, dynamicContainer };
     })();
 
     display.append(headContainer.head, mainContainer.main);
     document.body.appendChild(display);
 
+    return { mainContainer };
+
 })();
 
-function todo(task, dueDate) {
+
+function todo(task, dueDate, array) {
     return {
         task: task,
         dueDate: dueDate,
 
         addToEntries() {
-            entries.push({ task, dueDate });
+            project[array].push({ task, dueDate });
         }
     };
 };
 
 const projects = (() => {
-    const project = {};
 
     const tab = document.querySelector('#tab');
 
-    const projectContainer = document.createElement('div');
-    projectContainer.classList.add('hidden');
+    const projectRadioContainer = document.createElement('div');
+    projectRadioContainer.id = 'radioContainer';
+
+    const projectFormContainer = document.createElement('div');
+    projectFormContainer.classList.add('hidden');
 
     const projectForm = document.createElement('form');
     projectForm.id = 'projectForm';
@@ -138,24 +187,70 @@ const projects = (() => {
     submit.type = 'button';
 
     projectForm.append(projectName, submit);
-    projectContainer.append(projectForm);
-    tab.append(projectContainer);
+    projectFormContainer.append(projectForm);
+    tab.append(projectFormContainer);
+    tab.append(projectRadioContainer);
 
     const newProject = document.querySelector('#newProject');
 
     newProject.addEventListener('click', function () {
-        projectContainer.classList.remove('hidden');
+        projectFormContainer.classList.remove('hidden');
     })
 
     submit.addEventListener('click', function () {
-        projectContainer.classList.add('hidden');
+        projectFormContainer.classList.add('hidden');
     })
 
-    const addProject = (() => {
-        submit.addEventListener('click', function () {
+    function populateTab() {
+        if (projectName.value == '') {
+            const propNames = Object.getOwnPropertyNames(project);
+            projectName.value = propNames[0];
+        }
+        else if (project[projectName.value] == undefined) {
             project[projectName.value] = [];
-            console.log(Object.keys(project).length);
-            console.log(project);
-        })
+        }
+
+        const projectRadio = document.createElement('input');
+        projectRadio.type = 'radio';
+        projectRadio.name = 'radio';
+        projectRadio.id = projectName.value;
+        projectRadio.classList.add('projectRadio');
+        projectRadio.checked = true;
+        const projectLabel = document.createElement('label');
+        projectLabel.textContent = projectName.value;
+        projectLabel.setAttribute('for', projectName.value);
+        projectLabel.appendChild(projectRadio);
+        projectRadioContainer.append(projectLabel);
+        projectName.value = '';
+    }
+
+    populateTab();
+
+    bodyContainer.mainContainer.dynamicContainer.myForm.populateDisplay();
+
+    const addProject = (() => {
+        submit.addEventListener('click', populateTab)
     })();
+
+
+    submit.addEventListener('click', AccessRadios);
+
+    AccessRadios().radios.forEach(element => {
+        console.log(element);
+        element.addEventListener('click', function () {
+            console.log('working');
+        })
+    })
+
+    function AccessRadios() {
+
+        const radios = document.querySelectorAll('projectRadio');
+
+        console.log(radios);
+
+        return { radios };
+
+    }
+
+    return { project };
 })();
