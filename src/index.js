@@ -9,7 +9,18 @@ const project = {
         { task: 'three', dueDate: 'in two minutes' },
         { task: 'four', dueDate: 'right now' },
     ],
+    chores: [
+        { task: 'laundry', dueDate: 'now' },
+        { task: 'dishes', dueDate: 'today' },
+        { task: 'trash', dueDate: 'tomorrow' },
+        { task: 'shower', dueDate: 'tonight' },
+    ],
+    other: [
+        { task: 'test', dueDate: 'soon as possible' },
+    ]
 };
+
+
 
 
 const bodyContainer = (() => {
@@ -82,12 +93,10 @@ const bodyContainer = (() => {
                 form.append(task, dueDate, submit);
                 formContainer.append(form);
 
-                function populateDisplay() {
+                function populateDisplay(arr) {
                     const dynamicAll = document.querySelectorAll('.display');
 
                     const container = document.querySelectorAll('.projectRadio');
-
-                    let arr;
 
 
                     for (let p = 0; p < container.length; p++) {
@@ -201,27 +210,65 @@ const projects = (() => {
         projectFormContainer.classList.add('hidden');
     })
 
+    let starter = false
     function populateTab() {
-        if (projectName.value == '') {
-            const propNames = Object.getOwnPropertyNames(project);
-            projectName.value = propNames[0];
-        }
-        else if (project[projectName.value] == undefined) {
-            project[projectName.value] = [];
-        }
 
-        const projectRadio = document.createElement('input');
-        projectRadio.type = 'radio';
-        projectRadio.name = 'radio';
-        projectRadio.id = projectName.value;
-        projectRadio.classList.add('projectRadio');
-        projectRadio.checked = true;
-        const projectLabel = document.createElement('label');
-        projectLabel.textContent = projectName.value;
-        projectLabel.setAttribute('for', projectName.value);
-        projectLabel.appendChild(projectRadio);
-        projectRadioContainer.append(projectLabel);
-        projectName.value = '';
+        if (starter == false) {
+            for (let prop in project) {
+                console.log((Object.keys(project)).length);
+
+                if (projectName.value == '') {
+                    projectName.value = prop;
+                }
+                else if (project[projectName.value] == undefined) {
+                    project[projectName.value] = [];
+                }
+
+
+                const projectRadio = document.createElement('input');
+                projectRadio.type = 'radio';
+                projectRadio.name = 'radio';
+                projectRadio.id = projectName.value;
+                projectRadio.classList.add('projectRadio');
+                projectRadio.checked = true;
+
+                const projectLabel = document.createElement('label');
+                projectLabel.textContent = projectName.value;
+                projectLabel.setAttribute('for', projectName.value);
+                projectLabel.appendChild(projectRadio);
+
+                projectRadioContainer.append(projectLabel);
+                projectName.value = '';
+                if (project[(Object.keys(project).length - 1)] == prop) {
+                    console.log('worked');
+                }
+            }
+            starter = true;
+        }
+        else {
+            if (projectName.value == '') {
+                projectName.value = 'Project: ' + Object.keys(project).length;
+            }
+            else if (project[projectName.value] == undefined) {
+                project[projectName.value] = [];
+            }
+
+
+            const projectRadio = document.createElement('input');
+            projectRadio.type = 'radio';
+            projectRadio.name = 'radio';
+            projectRadio.id = projectName.value;
+            projectRadio.classList.add('projectRadio');
+            projectRadio.checked = true;
+
+            const projectLabel = document.createElement('label');
+            projectLabel.textContent = projectName.value;
+            projectLabel.setAttribute('for', projectName.value);
+            projectLabel.appendChild(projectRadio);
+
+            projectRadioContainer.append(projectLabel);
+            projectName.value = '';
+        }
     }
 
     populateTab();
@@ -232,25 +279,18 @@ const projects = (() => {
         submit.addEventListener('click', populateTab)
     })();
 
+    let radios = document.querySelectorAll('.projectRadio');
 
-    submit.addEventListener('click', AccessRadios);
 
-    AccessRadios().radios.forEach(element => {
-        console.log(element);
-        element.addEventListener('click', function () {
-            console.log('working');
+    submit.addEventListener('click', function () {
+        radios = document.querySelectorAll('.projectRadio');
+
+        radios.forEach(radio => {
+            radio.addEventListener('click', function () {
+                bodyContainer.mainContainer.dynamicContainer.myForm.populateDisplay();
+            })
         })
     })
-
-    function AccessRadios() {
-
-        const radios = document.querySelectorAll('projectRadio');
-
-        console.log(radios);
-
-        return { radios };
-
-    }
 
     return { project };
 })();
