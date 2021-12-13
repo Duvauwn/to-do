@@ -85,8 +85,7 @@ const bodyContainer = (() => {
         header.textContent = 'To-Do';
 
         head.appendChild(header);
-
-        return { head };
+        display.appendChild(head);
     })();
 
     const mainContainer = (() => {
@@ -151,30 +150,19 @@ const bodyContainer = (() => {
 
                     populateDisplay(task.value, dueDate.value);
                 })
-
-                return { formContainer };
+                newTask.addEventListener('click', function () {
+                    formContainer.classList.remove('hidden');
+                })
             })();
-
-            newTask.addEventListener('click', function () {
-                myForm.formContainer.classList.remove('hidden');
-            })
-
 
             main.appendChild(dynamic);
 
-            return { myForm };
+            display.appendChild(main);
+
         })();
-
-
-
-        return { main, dynamicContainer };
     })();
 
-    display.append(headContainer.head, mainContainer.main);
     document.body.appendChild(display);
-
-    return { mainContainer };
-
 })();
 
 const projects = (() => {
@@ -277,18 +265,9 @@ const projects = (() => {
         submit.addEventListener('click', populateTab)
     })();
 
-    let radios = document.querySelectorAll('.projectRadio');
-
-
-    submit.addEventListener('click', function () {
-        radios = document.querySelectorAll('.projectRadio');
-
-        radios.forEach(radio => {
-            radio.addEventListener('click', function () {
-                populateDisplay();
-            })
-        })
+    projectRadioContainer.addEventListener('click', e => {
+        if (e.target.className == 'projectRadio') {
+            populateDisplay();
+        }
     })
-
-    return { project };
 })();
