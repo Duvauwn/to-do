@@ -20,8 +20,57 @@ const project = {
     ]
 };
 
+function todo(task, dueDate, array) {
+    return {
+        task: task,
+        dueDate: dueDate,
+
+        addToEntries() {
+            project[array].push({ task, dueDate });
+        }
+    };
+};
+
+function populateDisplay(t, d, arr) {
+
+    const dynamicAll = document.querySelectorAll('.display');
+
+    const container = document.querySelectorAll('.projectRadio');
 
 
+    for (let p = 0; p < container.length; p++) {
+        if (container[p].checked == true) {
+            arr = container[p].parentNode.textContent;
+        }
+    }
+
+    for (let j = 0; j < dynamicAll.length; j++) {
+        if (j > 1) {
+            dynamicAll[j].remove();
+        }
+    }
+    if (t != undefined && d != undefined) {
+        const newTodo = todo(t, d, arr);
+
+        if (t != '' && d != '') {
+            newTodo.addToEntries();
+        }
+    }
+
+
+    for (let i = 0; i < project[arr].length; i++) {
+        const updateContainer = document.createElement('div');
+        updateContainer.classList.add('todos');
+        updateContainer.classList.add('display');
+
+        for (let prop in project[arr][i]) {
+            const updater = document.createElement('h3');
+            updater.textContent = project[arr][i][prop];
+            updateContainer.append(updater);
+        }
+        dynamic.append(updateContainer);
+    }
+}
 
 const bodyContainer = (() => {
     const display = document.createElement('div');
@@ -39,7 +88,6 @@ const bodyContainer = (() => {
 
         return { head };
     })();
-
 
     const mainContainer = (() => {
 
@@ -93,41 +141,7 @@ const bodyContainer = (() => {
                 form.append(task, dueDate, submit);
                 formContainer.append(form);
 
-                function populateDisplay(arr) {
-                    const dynamicAll = document.querySelectorAll('.display');
 
-                    const container = document.querySelectorAll('.projectRadio');
-
-
-                    for (let p = 0; p < container.length; p++) {
-                        if (container[p].checked == true) {
-                            arr = container[p].parentNode.textContent;
-                        }
-                    }
-
-                    for (let j = 0; j < dynamicAll.length; j++) {
-                        if (j > 1) {
-                            dynamicAll[j].remove();
-                        }
-                    }
-                    const newTodo = todo(task.value, dueDate.value, arr);
-                    if (task.value != '' && dueDate.value != '') {
-                        newTodo.addToEntries();
-                    }
-
-                    for (let i = 0; i < project[arr].length; i++) {
-                        const updateContainer = document.createElement('div');
-                        updateContainer.classList.add('todos');
-                        updateContainer.classList.add('display');
-
-                        for (let prop in project[arr][i]) {
-                            const updater = document.createElement('h3');
-                            updater.textContent = project[arr][i][prop];
-                            updateContainer.append(updater);
-                        }
-                        dynamic.append(updateContainer);
-                    }
-                }
 
                 dynamic.append(newTask);
                 dynamic.append(formContainer);
@@ -135,10 +149,10 @@ const bodyContainer = (() => {
                 submit.addEventListener('click', function () {
                     formContainer.classList.add('hidden');
 
-                    populateDisplay();
+                    populateDisplay(task.value, dueDate.value);
                 })
 
-                return { formContainer, populateDisplay };
+                return { formContainer };
             })();
 
             newTask.addEventListener('click', function () {
@@ -162,18 +176,6 @@ const bodyContainer = (() => {
     return { mainContainer };
 
 })();
-
-
-function todo(task, dueDate, array) {
-    return {
-        task: task,
-        dueDate: dueDate,
-
-        addToEntries() {
-            project[array].push({ task, dueDate });
-        }
-    };
-};
 
 const projects = (() => {
 
@@ -215,7 +217,6 @@ const projects = (() => {
 
         if (starter == false) {
             for (let prop in project) {
-                console.log((Object.keys(project)).length);
 
                 if (projectName.value == '') {
                     projectName.value = prop;
@@ -239,9 +240,6 @@ const projects = (() => {
 
                 projectRadioContainer.append(projectLabel);
                 projectName.value = '';
-                if (project[(Object.keys(project).length - 1)] == prop) {
-                    console.log('worked');
-                }
             }
             starter = true;
         }
@@ -273,7 +271,7 @@ const projects = (() => {
 
     populateTab();
 
-    bodyContainer.mainContainer.dynamicContainer.myForm.populateDisplay();
+    populateDisplay();
 
     const addProject = (() => {
         submit.addEventListener('click', populateTab)
@@ -287,7 +285,7 @@ const projects = (() => {
 
         radios.forEach(radio => {
             radio.addEventListener('click', function () {
-                bodyContainer.mainContainer.dynamicContainer.myForm.populateDisplay();
+                populateDisplay();
             })
         })
     })
