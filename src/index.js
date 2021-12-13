@@ -57,7 +57,6 @@ function populateDisplay(t, d, arr) {
         }
     }
 
-
     for (let i = 0; i < project[arr].length; i++) {
         const updateContainer = document.createElement('div');
         updateContainer.classList.add('todos');
@@ -165,6 +164,51 @@ const bodyContainer = (() => {
     document.body.appendChild(display);
 })();
 
+let starter = false;
+function createRadio(proj) {
+    const projectRadio = document.createElement('input');
+    projectRadio.type = 'radio';
+    projectRadio.name = 'radio';
+    projectRadio.id = proj;
+    projectRadio.classList.add('projectRadio');
+    projectRadio.checked = true;
+
+    const projectLabel = document.createElement('label');
+    projectLabel.textContent = proj;
+    projectLabel.setAttribute('for', proj);
+    projectLabel.appendChild(projectRadio);
+
+    document.querySelector('#radioContainer').append(projectLabel);
+}
+function populateTab(pro) {
+    if (starter == false) {
+        for (let prop in project) {
+            console.log(prop)
+
+            if (pro == '') {
+                pro = prop;
+            }
+            else if (project[pro] == undefined) {
+                project[pro] = [];
+            }
+            createRadio(pro);
+            pro = '';
+        }
+
+    }
+    else {
+        if (pro == '') {
+            pro = 'Project: ' + Object.keys(project).length;
+        }
+        else if (project[pro] == undefined) {
+            project[pro] = [];
+        }
+        createRadio(pro);
+        pro = '';
+    }
+
+    starter = true;
+}
 const projects = (() => {
 
     const tab = document.querySelector('#tab');
@@ -200,69 +244,14 @@ const projects = (() => {
         projectFormContainer.classList.add('hidden');
     })
 
-    let starter = false
-    function populateTab() {
-
-        if (starter == false) {
-            for (let prop in project) {
-
-                if (projectName.value == '') {
-                    projectName.value = prop;
-                }
-                else if (project[projectName.value] == undefined) {
-                    project[projectName.value] = [];
-                }
-
-
-                const projectRadio = document.createElement('input');
-                projectRadio.type = 'radio';
-                projectRadio.name = 'radio';
-                projectRadio.id = projectName.value;
-                projectRadio.classList.add('projectRadio');
-                projectRadio.checked = true;
-
-                const projectLabel = document.createElement('label');
-                projectLabel.textContent = projectName.value;
-                projectLabel.setAttribute('for', projectName.value);
-                projectLabel.appendChild(projectRadio);
-
-                projectRadioContainer.append(projectLabel);
-                projectName.value = '';
-            }
-            starter = true;
-        }
-        else {
-            if (projectName.value == '') {
-                projectName.value = 'Project: ' + Object.keys(project).length;
-            }
-            else if (project[projectName.value] == undefined) {
-                project[projectName.value] = [];
-            }
-
-
-            const projectRadio = document.createElement('input');
-            projectRadio.type = 'radio';
-            projectRadio.name = 'radio';
-            projectRadio.id = projectName.value;
-            projectRadio.classList.add('projectRadio');
-            projectRadio.checked = true;
-
-            const projectLabel = document.createElement('label');
-            projectLabel.textContent = projectName.value;
-            projectLabel.setAttribute('for', projectName.value);
-            projectLabel.appendChild(projectRadio);
-
-            projectRadioContainer.append(projectLabel);
-            projectName.value = '';
-        }
-    }
-
-    populateTab();
+    populateTab(projectName.value);
 
     populateDisplay();
 
     const addProject = (() => {
-        submit.addEventListener('click', populateTab)
+        submit.addEventListener('click', function () {
+            populateTab(projectName.value);
+        });
     })();
 
     projectRadioContainer.addEventListener('click', e => {
