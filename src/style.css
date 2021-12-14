@@ -46,10 +46,6 @@
     border-radius: 5px;
     color: #ffd59f;
 }
-#topProperties {
-    display: flex;
-    flex-direction: column;
-}
 #projectForm{
     display:flex;
     flex-direction: column;
