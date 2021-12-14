@@ -4,70 +4,76 @@ import './style.css';
 
 const project = {
     default: [
-        { task: 'one', dueDate: 'today' },
-        { task: 'two', dueDate: 'now' },
-        { task: 'three', dueDate: 'in two minutes' },
-        { task: 'four', dueDate: 'right now' },
+        { task: 'one', dueDate: 'today', description: 'Task One' },
+        { task: 'two', dueDate: 'now', description: 'Task Two' },
+        { task: 'three', dueDate: 'in two minutes', description: 'Task Three' },
+        { task: 'four', dueDate: 'right now', description: 'Task Four' },
     ],
     chores: [
-        { task: 'laundry', dueDate: 'now' },
-        { task: 'dishes', dueDate: 'today' },
-        { task: 'trash', dueDate: 'tomorrow' },
-        { task: 'shower', dueDate: 'tonight' },
+        { task: 'laundry', dueDate: 'today', description: 'Take the laundry down to the washroom' },
+        { task: 'dishes', dueDate: 'today', description: 'Wash the dishes after dinner' },
+        { task: 'trash', dueDate: 'tomorrow', description: 'Take out the trash in the morning' },
+        { task: 'shower', dueDate: 'today', description: 'Shower before bed' },
     ],
-    other: [
-        { task: 'test', dueDate: 'soon as possible' },
-    ]
 };
 
-function todo(task, dueDate, array) {
+function todo(task, dueDate, description, array) {
     return {
         task: task,
         dueDate: dueDate,
+        description: description,
 
         addToEntries() {
-            project[array].push({ task, dueDate });
+            project[array].push({ task, dueDate, description });
         }
     };
 };
 
-function populateDisplay(t, d, arr) {
-
+function populateDisplay(t, d, desc, arr) {
     const dynamicAll = document.querySelectorAll('.display');
 
     const container = document.querySelectorAll('.projectRadio');
-
 
     for (let p = 0; p < container.length; p++) {
         if (container[p].checked == true) {
             arr = container[p].parentNode.textContent;
         }
     }
-
     for (let j = 0; j < dynamicAll.length; j++) {
         if (j > 1) {
             dynamicAll[j].remove();
         }
     }
     if (t != undefined && d != undefined) {
-        const newTodo = todo(t, d, arr);
+        const newTodo = todo(t, d, desc, arr);
 
         if (t != '' && d != '') {
             newTodo.addToEntries();
         }
     }
-
     for (let i = 0; i < project[arr].length; i++) {
-        const updateContainer = document.createElement('div');
-        updateContainer.classList.add('todos');
-        updateContainer.classList.add('display');
+        const propertiesContainer = document.createElement('div');
+        propertiesContainer.classList.add('todos');
+        propertiesContainer.classList.add('display');
 
         for (let prop in project[arr][i]) {
-            const updater = document.createElement('h3');
-            updater.textContent = project[arr][i][prop];
-            updateContainer.append(updater);
+            const properties = document.createElement('h3');
+            const otherProperties = document.createElement('div');
+            otherProperties.id = 'topProperties';
+
+            properties.classList.add('properties');
+            properties.textContent = project[arr][i][prop];
+            if (properties.textContent != project[arr][i]['description']) {
+                properties.classList.add('otherProperties');
+                otherProperties.appendChild(properties);
+                propertiesContainer.appendChild(otherProperties)
+            }
+            else if (properties.textContent == project[arr][i]['description']) {
+                properties.classList.add('description');
+                propertiesContainer.appendChild(properties);
+            }
         }
-        dynamic.append(updateContainer);
+        dynamic.append(propertiesContainer);
     }
 }
 
@@ -107,7 +113,6 @@ const bodyContainer = (() => {
             tab.append(tabHead, newProject);
             main.appendChild(tab);
         })();
-
         const dynamicContainer = (() => {
             const dynamic = document.createElement('div');
             dynamic.id = 'dynamic';
@@ -123,6 +128,9 @@ const bodyContainer = (() => {
                 formContainer.classList.add('hidden');
                 formContainer.id = 'formContainer';
 
+                const formTop = document.createElement('div');
+                const formBottom = document.createElement('div');
+
                 const form = document.createElement('form');
                 form.id = 'myForm';
 
@@ -132,39 +140,41 @@ const bodyContainer = (() => {
                 const dueDate = document.createElement('input');
                 dueDate.type = 'date';
 
+                const description = document.createElement('textarea');
+                description.name = 'description';
+                description.cols = '40';
+                description.rows = '7';
+
                 const submit = document.createElement('button');
                 submit.type = 'button';
                 submit.textContent = 'Submit';
 
-                form.append(task, dueDate, submit);
-                formContainer.append(form);
+                formTop.append(task, dueDate);
+                formBottom.append(description, submit);
 
+                form.append(formTop, formBottom);
+                formContainer.appendChild(form);
 
-
-                dynamic.append(newTask);
-                dynamic.append(formContainer);
+                dynamic.appendChild(newTask);
+                dynamic.appendChild(formContainer);
 
                 submit.addEventListener('click', function () {
                     formContainer.classList.add('hidden');
 
-                    populateDisplay(task.value, dueDate.value);
+                    populateDisplay(task.value, dueDate.value, description.value);
                 })
                 newTask.addEventListener('click', function () {
                     formContainer.classList.remove('hidden');
                 })
             })();
-
             main.appendChild(dynamic);
-
             display.appendChild(main);
-
         })();
     })();
-
     document.body.appendChild(display);
 })();
 
-let starter = false;
+
 function createRadio(proj) {
     const projectRadio = document.createElement('input');
     projectRadio.type = 'radio';
@@ -178,13 +188,12 @@ function createRadio(proj) {
     projectLabel.setAttribute('for', proj);
     projectLabel.appendChild(projectRadio);
 
-    document.querySelector('#radioContainer').append(projectLabel);
+    document.querySelector('#radioContainer').appendChild(projectLabel);
 }
+let starter = false;
 function populateTab(pro) {
     if (starter == false) {
         for (let prop in project) {
-            console.log(prop)
-
             if (pro == '') {
                 pro = prop;
             }
@@ -194,7 +203,6 @@ function populateTab(pro) {
             createRadio(pro);
             pro = '';
         }
-
     }
     else {
         if (pro == '') {
@@ -206,11 +214,9 @@ function populateTab(pro) {
         createRadio(pro);
         pro = '';
     }
-
     starter = true;
 }
 const projects = (() => {
-
     const tab = document.querySelector('#tab');
 
     const projectRadioContainer = document.createElement('div');
@@ -230,30 +236,26 @@ const projects = (() => {
     submit.type = 'button';
 
     projectForm.append(projectName, submit);
-    projectFormContainer.append(projectForm);
-    tab.append(projectFormContainer);
-    tab.append(projectRadioContainer);
+    projectFormContainer.appendChild(projectForm);
+    tab.appendChild(projectFormContainer);
+    tab.appendChild(projectRadioContainer);
 
     const newProject = document.querySelector('#newProject');
 
     newProject.addEventListener('click', function () {
         projectFormContainer.classList.remove('hidden');
     })
-
     submit.addEventListener('click', function () {
         projectFormContainer.classList.add('hidden');
     })
-
     populateTab(projectName.value);
-
     populateDisplay();
-
     const addProject = (() => {
         submit.addEventListener('click', function () {
             populateTab(projectName.value);
+            populateDisplay();
         });
     })();
-
     projectRadioContainer.addEventListener('click', e => {
         if (e.target.className == 'projectRadio') {
             populateDisplay();

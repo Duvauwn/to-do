@@ -30,24 +30,25 @@
 }
 #formContainer{
     width:90%;
-    height:50px;
+    height:fit-content;
 }
 #myForm{
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap:20px;
+    flex-direction: column;
     background-color: grey;
     height:100%;
     border-radius: 5px;
 }
 .todos{
-    display:flex;
-    justify-content: space-between;
+    display: flex;
     width:80%;
     border:2px solid #ffd59f;
     border-radius: 5px;
     color: #ffd59f;
+}
+#topProperties {
+    display: flex;
+    flex-direction: column;
 }
 #projectForm{
     display:flex;
